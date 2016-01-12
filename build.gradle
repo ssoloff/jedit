@@ -1,3 +1,44 @@
+plugins {
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.4'
+}
+
+group = 'io.github.ssoloff'
+version = '0.0.0'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact file("libs/jedit-${version}.jar")
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+
+    dryRun = true
+    publish = true
+    publications = ['maven']
+
+    pkg {
+        repo = 'maven'
+        name = 'io.github.ssoloff:jedit'
+        desc = 'jEdit application and plugin API'
+        websiteUrl = 'https://github.com/ssoloff/jedit'
+        issueTrackerUrl = 'https://github.com/ssoloff/jedit/issues'
+        vcsUrl = 'https://github.com/ssoloff/jedit.git'
+        licenses = ['GPL-2.0']
+        publicDownloadNumbers = true
+
+        version {
+            name = "$version"
+            desc = "jEdit $version"
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     description = 'Generates Gradle wrapper files.'
     group = 'Build Setup'
