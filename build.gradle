@@ -18,7 +18,6 @@ bintray {
     user = bintrayUser
     key = bintrayKey
 
-    dryRun = true
     publish = true
     publications = ['maven']
 
