@@ -4,12 +4,11 @@ plugins {
 }
 
 group = 'io.github.ssoloff'
-version = '0.0.0'
 
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact file("libs/jedit-${version}.jar")
+            artifact file("libs/jedit-${project.version}.jar")
         }
     }
 }
@@ -32,8 +31,8 @@ bintray {
         publicDownloadNumbers = true
 
         version {
-            name = "$version"
-            desc = "jEdit $version"
+            name = "${project.version}"
+            desc = "jEdit ${project.version}"
         }
     }
 }
