@@ -1,14 +1,43 @@
 plugins {
+    id 'base'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.4'
+    id 'de.undercouch.download' version '2.1.0'
 }
 
 group = 'io.github.ssoloff'
 
+ext {
+    downloadsDir = file("$buildDir/tmp/downloads")
+    jeditDistUrl = "http://downloads.sourceforge.net/project/jedit/jedit/$version/jedit-$version-noarch-1sao.tgz"
+    jeditDistArchive = file("$downloadsDir/jedit-${version}.tgz")
+    jeditJar = file("$libsDir/jedit-${version}.jar")
+}
+
+task downloadJEdit() {
+    outputs.file jeditJar
+
+    doLast {
+        download {
+            src jeditDistUrl
+            dest jeditDistArchive
+        }
+
+        copy {
+            from tarTree(jeditDistArchive).files
+            into libsDir
+            include 'jedit.jar'
+            rename { jeditJar.name }
+        }
+    }
+}
+
+bintrayUpload.dependsOn downloadJEdit
+
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact file("libs/jedit-${project.version}.jar")
+            artifact jeditJar
         }
     }
 }
@@ -31,8 +60,8 @@ bintray {
         publicDownloadNumbers = true
 
         version {
-            name = "${project.version}"
-            desc = "jEdit ${project.version}"
+            name = "$version"
+            desc = "jEdit $version"
         }
     }
 }
