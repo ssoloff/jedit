@@ -8,6 +8,4 @@ The purpose of this project is simply to publish the jEdit application binaries 
 
 For example, to publish jEdit version 5.3.0 to Bintray, use the following command:
 
-```
-$ ./gradlew -Pversion=5.3.0 bintrayUpload
-```
+    $ ./gradlew -Pversion=5.3.0 bintrayUpload
