@@ -60,8 +60,8 @@ bintray {
         publicDownloadNumbers = true
 
         version {
-            name = "$version"
-            desc = "jEdit $version"
+            name = "${project.version}"
+            desc = "jEdit ${project.version}"
         }
     }
 }
