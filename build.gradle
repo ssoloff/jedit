@@ -1,3 +1,5 @@
+import de.undercouch.gradle.tasks.download.Download
+
 plugins {
     id 'base'
     id 'maven-publish'
@@ -9,22 +11,22 @@ group = 'io.github.ssoloff'
 
 ext {
     downloadsDir = file("$buildDir/tmp/downloads")
-    jeditDistUrl = "http://downloads.sourceforge.net/project/jedit/jedit/$version/jedit-$version-noarch-1sao.tgz"
-    jeditDistArchive = file("$downloadsDir/jedit-${version}.tgz")
     jeditJar = file("$libsDir/jedit-${version}.jar")
 }
 
-task downloadJEdit() {
+task downloadJEditBinDistTar(type: Download) {
+    src "http://downloads.sourceforge.net/project/jedit/jedit/$version/jedit-$version-noarch-1sao.tgz"
+    dest file("$downloadsDir/jedit-${version}.tar.gz")
+    onlyIfNewer true
+}
+
+task prepareJEditJar(dependsOn: downloadJEditBinDistTar) {
+    inputs.file downloadJEditBinDistTar.dest
     outputs.file jeditJar
 
     doLast {
-        download {
-            src jeditDistUrl
-            dest jeditDistArchive
-        }
-
         copy {
-            from tarTree(jeditDistArchive).files
+            from tarTree(downloadJEditBinDistTar.dest).files
             into libsDir
             include 'jedit.jar'
             rename { jeditJar.name }
@@ -39,7 +41,7 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
 }
 
-bintrayUpload.dependsOn downloadJEdit
+bintrayUpload.dependsOn prepareJEditJar
 
 publishing {
     publications {
