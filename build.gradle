@@ -11,22 +11,23 @@ group = 'io.github.ssoloff'
 
 ext {
     downloadsDir = file("$buildDir/tmp/downloads")
+    jeditBinDistTar = file("$downloadsDir/jedit-$version-bin.tar.gz")
     jeditJar = file("$libsDir/jedit-${version}.jar")
 }
 
 task downloadJEditBinDistTar(type: Download) {
     src "http://downloads.sourceforge.net/project/jedit/jedit/$version/jedit-$version-noarch-1sao.tgz"
-    dest file("$downloadsDir/jedit-${version}.tar.gz")
+    dest jeditBinDistTar
     onlyIfNewer true
 }
 
 task prepareJEditJar(dependsOn: downloadJEditBinDistTar) {
-    inputs.file downloadJEditBinDistTar.dest
+    inputs.file jeditBinDistTar
     outputs.file jeditJar
 
     doLast {
         copy {
-            from tarTree(downloadJEditBinDistTar.dest).files
+            from tarTree(jeditBinDistTar).files
             into libsDir
             include 'jedit.jar'
             rename { jeditJar.name }
@@ -47,6 +48,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             artifact jeditJar
+            artifact source: jeditBinDistTar, classifier: 'bin', extension: 'tar.gz'
         }
     }
 }
